@@ -48,7 +48,7 @@ class Employees(Base):
         return Response(signup_user, status=status.HTTP_400_BAD_REQUEST)
     
     
-class EmpoyeeDetail(Base):
+class EmployeeDetail(Base):
     permission_classes = [EmployeesPermission]
     def get(self, request, employee_id):
         employee = self.get_employee(employee_id, request.user.id)
@@ -67,7 +67,7 @@ class EmpoyeeDetail(Base):
         
         
         if email != employee.user.email and User.objects.filter(email=email).exists():
-            raise APIException(f"O email {email} já está em uso", code="email_already_use")
+            raise APIException("O email já está em uso", code="email_already_use")
         
         
         User.objects.filter(id=employee.user.id).update(
@@ -87,22 +87,21 @@ class EmpoyeeDetail(Base):
                     user_id=employee.user.id
                 )
                 
-            return Response({
-                'success': True})
+        return Response({"success": True})
             
-        def delete(self, request, employee_id):
-            employee = self.get_employee(employee_id, request.user.id)
-            
-            check_if_owner = User.objects.filter(id=employee.user.id, is_owner=1).exists()
-            
-            if check_if_owner:
-                raise APIException('Você não pode demitir o dono da empresa')
-            
-            employee.delete()
-            
-            User.objects.filter(id=employee.user.id).delete()
-            
-            return Response({"success": True})
+    def delete(self, request, employee_id):
+        employee = self.get_employee(employee_id, request.user.id)
+        
+        check_if_owner = User.objects.filter(id=employee.user.id, is_owner=1).exists()
+        
+        if check_if_owner:
+            raise APIException('Você não pode demitir o dono da empresa')
+        
+        employee.delete()
+        
+        User.objects.filter(id=employee.user.id).delete()
+        
+        return Response({"success": True})
                 
         
 
