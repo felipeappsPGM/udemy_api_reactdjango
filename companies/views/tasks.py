@@ -26,7 +26,7 @@ class Tasks(Base):
         title = request.data.get('title')
         description = request.data.get('description')
         status_id = request.data.get('employee_id')
-        due_date = request.data.get('employee_id')
+        due_date = request.data.get('due_date')
         
         employee = self.get_employee(employee_id, request.user.id)
         
@@ -37,6 +37,7 @@ class Tasks(Base):
         if not title or len(title) > 125:
             raise APIException("Envie um título válido, para essa tarefa")
         
+        print(due_date)
         if due_date:
             try:
                 due_date = datetime.datetime.strptime(due_date, "%d/%m/%Y %H:%M")
