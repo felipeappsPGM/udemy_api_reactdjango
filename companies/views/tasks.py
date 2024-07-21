@@ -89,7 +89,7 @@ class TaskDetail(Base):
         
         self.get_status(status_id)
         self.get_employee(employee_id, request.user.id)
-        if due_date:
+        if due_date and due_date != task.due_date:
             try:
                 due_date = datetime.datetime.strptime(due_date, "%d/%m/%Y %H:%M")
                 
