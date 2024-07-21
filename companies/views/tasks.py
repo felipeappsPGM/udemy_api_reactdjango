@@ -82,19 +82,23 @@ class TaskDetail(Base):
         employee_id = request.data.get('employee_id', task.employee.id) 
         title = request.data.get('title', task.title)
         description = request.data.get('description', task.description)
-        status_id = request.data.get('employee_id', task.status.id)
+        status_id = request.data.get('status_id', task.status.id)
         due_date = request.data.get('employee_id', task.due_date)
         
         # Validators
         
         self.get_status(status_id)
         self.get_employee(employee_id, request.user.id)
+        if due_date:
+            try:
+                due_date = datetime.datetime.strptime(due_date, "%d/%m/%Y %H:%M")
+                
+            except ValueError:
+                raise APIException("A data deve ter o padrão: d/m/Y H:M", "date_invalid")
         
         data = {
             "title": title,
             "description": description,
-            "status_id": status_id,
-            "employee_id": employee_id,
             "due_date": due_date,
             
         }
@@ -104,8 +108,8 @@ class TaskDetail(Base):
         if not serializer.is_valid():
             raise APIException("Não foi possível editar a tarefa")
         
-        serializer.update(task, serializer.validate_data)
-        
+        serializer.update(task, serializer.validated_data)
+        print(status_id)
         task.status_id = status_id
         task.employee_id = employee_id
         
