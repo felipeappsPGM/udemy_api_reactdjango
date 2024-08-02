@@ -22,5 +22,5 @@ class Signin(Base):
             'user': serializer.data,
             'enterprise': enterprise,
             'refresh': str(token),
-            'acess': str(token.access_token),
+            'access': str(token.access_token),
         })
